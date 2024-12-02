@@ -37,7 +37,27 @@ function createExcelFile(data) {
   const rows = [["순번", "키워드"]];
   data.forEach(item => rows.push([item.rank, item.keyword]));
 
+  // CSV 데이터 생성
   const csvContent = rows.map(row => row.join(",")).join("\n");
-  const blob = new Blob([`\uFEFF${csvContent}`], { type: "text/csv;charset=utf-8;" }); // UTF-8 BOM 추가
+
+  // UTF-8 BOM 추가
+  const blob = new Blob([`\uFEFF${csvContent}`], { type: "text/csv;charset=utf-8;" });
   return blob;
 }
+
+document.getElementById('downloadExcel').addEventListener('click', () => {
+  const data = JSON.parse(localStorage.getItem('scrapedData'));
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  const category = "크롤링_결과"; // 카테고리 이름
+  const fileName = `${category}_${dateStr}.csv`; // 확장자를 .csv로 변경
+
+  const blob = createExcelFile(data);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
