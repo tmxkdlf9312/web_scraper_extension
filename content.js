@@ -14,25 +14,27 @@ async function goToNextPage() {
   if (nextButton) {
     nextButton.click();
     return new Promise(resolve => setTimeout(resolve, 2000)); // 페이지 로딩 대기
+  } else {
+    return false; // 다음 버튼이 없으면 종료
   }
-  return false;
 }
 
 async function startScraping() {
-  for (let i = 0; i < 5; i++) { // 5페이지 크롤링
+  for (let i = 0; i < 5; i++) { // 최대 5페이지
     scrapeKeywords();
     const hasNextPage = await goToNextPage();
-    if (!hasNextPage) break;
+    if (!hasNextPage) {
+      console.log('더 이상 페이지가 없습니다.');
+      break;
+    }
   }
-  return scrapedData;
+
+  // 크롤링 데이터 출력
+  console.log(scrapedData);
+
+  // 크롤링 결과를 확장 프로그램으로 전송
+  chrome.runtime.sendMessage({ type: 'scrapedData', data: scrapedData });
 }
 
-// 메시지 수신 시 크롤링 실행
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'startScraping') {
-    startScraping().then(data => {
-      sendResponse({ data });
-    });
-  }
-  return true; // 비동기 응답
-});
+// 크롤링 작업 시작
+startScraping();
