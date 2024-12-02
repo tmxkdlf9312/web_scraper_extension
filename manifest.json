@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Web Scraper with Excel Export",
+  "version": "1.0",
+  "description": "Scrape and download data as Excel",
+  "permissions": ["activeTab", "scripting", "downloads"],
+  "host_permissions": ["https://example.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://example.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
